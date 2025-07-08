@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Ảnh & Nhạc của tôi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #4CAF50;
+    }
+    img {
+      max-width: 90%;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    audio {
+      margin-top: 30px;
+      width: 80%;
+    }
+    .note {
+      margin-top: 20px;
+      font-style: italic;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📸 Kỷ niệm của tôi</h1>
+
+  <img id="mainImage" src="" alt="Ảnh kỷ niệm">
+
+  <div class="note">Một chiều đạp xe dưới tán hoa tím, giai điệu vang lên nhẹ nhàng...</div>
+
+  <audio id="mainAudio" controls autoplay loop>
+    <source id="audioSource" src="" type="">
+    Trình duyệt không hỗ trợ phát nhạc.
+  </audio>
+
+  <script>
+    // Xử lý ảnh tự động
+    const mainImage = document.getElementById("mainImage");
+    const imageExtensions = ["jpg", "jpeg", "png", "gif"];
+
+    function tryNextImage(index) {
+      if (index >= imageExtensions.length) {
+        mainImage.alt = "Không tìm thấy ảnh phù hợp.";
+        return;
+      }
+
+      const testImg = new Image();
+      const path = `images/image.${imageExtensions[index]}`;
+      testImg.onload = () => {
+        mainImage.src = path;
+      };
+      testImg.onerror = () => {
+        tryNextImage(index + 1);
+      };
+      testImg.src = path;
+    }
+
+    tryNextImage(0);
+
+    // Xử lý nhạc tự động
+    const audio = document.getElementById("mainAudio");
+    const source = document.getElementById("audioSource");
+    const audioExtensions = ["mp3", "m4a", "ogg", "wav"];
+
+    function tryNextAudio(index) {
+      if (index >= audioExtensions.length) {
+        audio.style.display = "none";
+        return;
+      }
+
+      const path = `music/audio.${audioExtensions[index]}`;
+      const testAudio = new Audio();
+      testAudio.src = path;
+      testAudio.addEventListener("canplaythrough", () => {
+        let type = audioExtensions[index];
+        if (type === "m4a") type = "mp4";  // Fix compatibility
+        source.src = path;
+        source.type = "audio/" + type;
+        audio.load();
+        audio.play();
+      });
+      testAudio.addEventListener("error", () => {
+        tryNextAudio(index + 1);
+      });
+    }
+
+    tryNextAudio(0);
+  </script>
+
+</body>
+</html>
